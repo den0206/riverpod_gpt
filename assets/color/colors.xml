@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="scaffoldBackgroundColor">#FF343541</color>
+    <color name="cardColor">#FF444654</color>
+</resources>
