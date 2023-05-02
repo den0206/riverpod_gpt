@@ -13,27 +13,40 @@ class ChatScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final vm = ref.watch(ViewModelProviders.chatViewProvider.notifier);
     final state = ref.watch(ViewModelProviders.chatViewProvider);
 
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Image.asset(Assets.icon.icon.path),
+          child: Image.asset(Assets.images.chatLogo.path),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.restore_from_trash),
+            onPressed: () {
+              vm.clearChat();
+            },
+          )
+        ],
         title: const Text('GPT'),
       ),
       body: SafeArea(
         child: Column(
           children: [
             const ChatArea(),
-            const Spacer(),
+
             if (state.isTyping) ...[
               const SpinKitThreeBounce(
                 color: Colors.white,
                 size: 18,
               ),
+              const SizedBox(
+                height: 15,
+              )
             ],
+
             // const ModelDropdownButtons(),
             const TextFileldArea(),
           ],
@@ -48,71 +61,88 @@ class ChatArea extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(SettingsProviders.chatListProvider);
+    final vm = ref.watch(ViewModelProviders.chatViewProvider.notifier);
+    final chatList = ref.watch(SettingsProviders.chatListProvider);
     return Expanded(
       child: ListView.builder(
-        itemCount: state.length,
-        shrinkWrap: true,
+        itemCount: chatList.length,
+        controller: vm.listScrollController,
         itemBuilder: (context, index) {
-          final message = state[index];
-          final bool isAssistant =
-              message.role == OpenAIChatMessageRole.assistant;
-          return Material(
-            color: isAssistant
-                ? ColorName.scaffoldBackgroundColor
-                : ColorName.cardColor,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    isAssistant
-                        ? Assets.images.chatLogo.path
-                        : Assets.images.person.path,
-                    height: 30,
-                    width: 30,
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  if (isAssistant) ...[
-                    Container(
-                      constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width - 100),
-                      child: DefaultTextStyle(
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16),
-                        child: AnimatedTextKit(
-                          isRepeatingAnimation: false,
-                          repeatForever: false,
-                          displayFullTextOnTap: true,
-                          totalRepeatCount: 1,
-                          animatedTexts: [
-                            TyperAnimatedText(
-                              message.content.trim(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ] else ...[
-                    Text(
-                      message.content,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16),
-                    )
-                  ]
-                ],
-              ),
-            ),
-          );
+          final message = chatList[index];
+
+          return ChatCell(message: message);
         },
+      ),
+    );
+  }
+}
+
+class ChatCell extends StatelessWidget {
+  const ChatCell({
+    super.key,
+    required this.message,
+  });
+
+  final OpenAIChatCompletionChoiceMessageModel message;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isAssistant = message.role == OpenAIChatMessageRole.assistant;
+
+    return Material(
+      color:
+          isAssistant ? ColorName.scaffoldBackgroundColor : ColorName.cardColor,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              isAssistant
+                  ? Assets.images.chatLogo.path
+                  : Assets.images.person.path,
+              height: 30,
+              width: 30,
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+            if (isAssistant) ...[
+              Container(
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width - 100),
+                child: DefaultTextStyle(
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
+                  child: AnimatedTextKit(
+                    isRepeatingAnimation: false,
+                    repeatForever: false,
+                    displayFullTextOnTap: true,
+                    totalRepeatCount: 1,
+                    animatedTexts: [
+                      TyperAnimatedText(
+                        message.content.trim(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ] else ...[
+              Text(
+                message.content,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16),
+              )
+            ],
+            const Spacer()
+          ],
+        ),
       ),
     );
   }
@@ -135,6 +165,7 @@ class TextFileldArea extends ConsumerWidget {
               child: TextField(
                 style: const TextStyle(color: Colors.white),
                 controller: vm.textfield,
+                focusNode: vm.focusNode,
                 decoration: const InputDecoration.collapsed(
                     hintText: "How can I help you",
                     hintStyle: TextStyle(color: Colors.grey)),
