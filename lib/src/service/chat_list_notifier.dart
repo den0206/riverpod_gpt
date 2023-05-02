@@ -32,6 +32,6 @@ class ChatListNotifier
   }
 
   void clearMessages() {
-    state.clear();
+    state = [];
   }
 }

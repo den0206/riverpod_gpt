@@ -6,24 +6,48 @@ import 'package:riverpod_gpt/src/screen/chat/chat_screen_state.dart';
 class ChatScreenModel extends AutoDisposeNotifier<ChatScreenState> {
   @override
   ChatScreenState build() {
+    ref.onDispose(() {
+      onDispose();
+    });
     return const ChatScreenState();
   }
 
   final textfield = TextEditingController();
-  final _focusNode = FocusNode();
+  final listScrollController = ScrollController();
+  final focusNode = FocusNode();
 
   void onDispose() {
-    _focusNode.dispose();
+    textfield.dispose();
+    listScrollController.dispose();
+    focusNode.dispose();
+  }
+
+  void _scrollListToEND() {
+    listScrollController.animateTo(
+        listScrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 2),
+        curve: Curves.easeOut);
+  }
+
+  void clearChat() {
+    ref.read(SettingsProviders.chatListProvider.notifier).clearMessages();
   }
 
   Future<void> sendMessage() async {
     if (textfield.text.isEmpty) return;
 
+    final message = textfield.text;
+
+    focusNode.unfocus();
+    textfield.clear();
+
     try {
       state = state.copyWith(isTyping: true);
       final action = ref.read(SettingsProviders.chatListProvider.notifier);
 
-      await action.sendMessage(message: textfield.text);
+      await action.sendMessage(message: message);
+
+      _scrollListToEND();
     } catch (e) {
       debugPrint(e.toString());
     } finally {
