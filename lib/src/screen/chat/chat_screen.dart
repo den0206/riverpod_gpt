@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:riverpod_gpt/src/_generated/gen/assets.gen.dart';
 import 'package:riverpod_gpt/src/_generated/gen/colors.gen.dart';
+import 'package:riverpod_gpt/src/common/provider/providers.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends ConsumerWidget {
   static const routeName = '/chat';
   const ChatScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final focusNode = FocusNode();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vm = ref.watch(ViewModelProviders.chatViewProvider.notifier);
+    final state = ref.watch(ViewModelProviders.chatViewProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -21,13 +25,14 @@ class ChatScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-                child: ListView.builder(
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return const Text("SAMPLE");
-              },
-            )),
+            const Spacer(),
+            if (state.isTyping) ...[
+              const SpinKitThreeBounce(
+                color: Colors.white,
+                size: 18,
+              ),
+            ],
+            // const ModelDropdownButtons(),
             Material(
               color: ColorName.cardColor,
               child: Padding(
@@ -36,13 +41,12 @@ class ChatScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextField(
-                        focusNode: focusNode,
                         style: const TextStyle(color: Colors.white),
-                        controller: TextEditingController(),
-                        onSubmitted: (value) async {},
+                        controller: vm.textfield,
                         decoration: const InputDecoration.collapsed(
                             hintText: "How can I help you",
                             hintStyle: TextStyle(color: Colors.grey)),
+                        onSubmitted: (value) async {},
                       ),
                     ),
                     IconButton(
