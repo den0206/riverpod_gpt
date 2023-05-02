@@ -9,7 +9,7 @@ class OpenAIClient {
     return models;
   }
 
-  Future<void> sendMessage(String message,
+  Future<OpenAIChatCompletionChoiceMessageModel> sendMessage(String message,
       List<OpenAIChatCompletionChoiceMessageModel> messages) async {
     List<OpenAIChatCompletionChoiceMessageModel> currentMessage = [];
     // メッセージをuserロールでモデル化
@@ -29,13 +29,12 @@ class OpenAIClient {
       messages: currentMessage,
     );
 
-    print(
-      chatCompletion.choices.first.message,
-    );
     // 結果を追加
     currentMessage = [
       ...currentMessage,
       chatCompletion.choices.first.message,
     ];
+
+    return chatCompletion.choices.first.message;
   }
 }
