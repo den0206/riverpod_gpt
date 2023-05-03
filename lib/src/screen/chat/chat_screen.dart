@@ -27,6 +27,7 @@ class ChatScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.image),
             onPressed: () {
+              vm.focusNode.unfocus();
               Navigator.of(context).pushNamed(ImageScreen.routeName);
             },
           ),
@@ -55,7 +56,11 @@ class ChatScreen extends ConsumerWidget {
             ],
 
             // const ModelDropdownButtons(),
-            const TextFileldArea(),
+            TextFileldArea(
+              controller: vm.textfield,
+              focusNode: vm.focusNode,
+              onSubmit: () async => await vm.sendMessage(),
+            ),
           ],
         ),
       ),
@@ -155,13 +160,20 @@ class ChatCell extends StatelessWidget {
   }
 }
 
-class TextFileldArea extends ConsumerWidget {
-  const TextFileldArea({super.key});
+class TextFileldArea extends StatelessWidget {
+  const TextFileldArea({
+    super.key,
+    required this.controller,
+    required this.focusNode,
+    this.onSubmit,
+  });
+
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final void Function()? onSubmit;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final vm = ref.watch(ViewModelProviders.chatViewProvider.notifier);
-
+  Widget build(BuildContext context) {
     return Material(
       color: ColorName.cardColor,
       child: Padding(
@@ -171,24 +183,23 @@ class TextFileldArea extends ConsumerWidget {
             Expanded(
               child: TextField(
                 style: const TextStyle(color: Colors.white),
-                controller: vm.textfield,
-                focusNode: vm.focusNode,
+                controller: controller,
+                focusNode: focusNode,
                 decoration: const InputDecoration.collapsed(
                     hintText: "How can I help you",
                     hintStyle: TextStyle(color: Colors.grey)),
                 onSubmitted: (value) async {
-                  await vm.sendMessage();
+                  if (onSubmit != null) onSubmit!();
                 },
               ),
             ),
             IconButton(
-                onPressed: () async {
-                  vm.sendMessage();
-                },
-                icon: const Icon(
-                  Icons.send,
-                  color: Colors.white,
-                ))
+              onPressed: onSubmit,
+              icon: const Icon(
+                Icons.send,
+                color: Colors.white,
+              ),
+            )
           ],
         ),
       ),
