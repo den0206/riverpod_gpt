@@ -37,4 +37,15 @@ class OpenAIClient {
 
     return chatCompletion.choices.first.message;
   }
+
+  Future<OpenAIImageModel> generateImage({required String prompt}) async {
+    final OpenAIImageModel image = await OpenAI.instance.image.create(
+      prompt: 'an astronaut on the sea',
+      n: 1,
+      size: OpenAIImageSize.size512,
+      responseFormat: OpenAIImageResponseFormat.url,
+    );
+
+    return image;
+  }
 }

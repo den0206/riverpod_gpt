@@ -34,7 +34,7 @@ class ChatScreenModel extends AutoDisposeNotifier<ChatScreenState> {
   }
 
   Future<void> sendMessage() async {
-    if (textfield.text.isEmpty) return;
+    if (textfield.text.isEmpty || state.isTyping) return;
 
     final message = textfield.text;
 

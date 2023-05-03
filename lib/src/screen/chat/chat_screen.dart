@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:riverpod_gpt/src/_generated/gen/assets.gen.dart';
 import 'package:riverpod_gpt/src/_generated/gen/colors.gen.dart';
 import 'package:riverpod_gpt/src/common/provider/providers.dart';
+import 'package:riverpod_gpt/src/screen/image/image_screen.dart';
 
 class ChatScreen extends ConsumerWidget {
   static const routeName = '/chat';
@@ -24,11 +25,17 @@ class ChatScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
+            icon: const Icon(Icons.image),
+            onPressed: () {
+              Navigator.of(context).pushNamed(ImageScreen.routeName);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.restore_from_trash),
             onPressed: () {
               vm.clearChat();
             },
-          )
+          ),
         ],
         title: const Text('GPT'),
       ),
