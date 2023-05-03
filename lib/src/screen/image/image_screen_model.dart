@@ -6,18 +6,33 @@ import 'package:riverpod_gpt/src/service/openai_client.dart';
 class ImageScreenModel extends AutoDisposeNotifier<ImageScreenState> {
   @override
   ImageScreenState build() {
+    ref.onDispose(() {
+      onDispose();
+    });
+
+    focusNode.requestFocus();
     return const ImageScreenState();
   }
 
+  final imageTextController = TextEditingController();
+  final focusNode = FocusNode();
   bool get isLoading => state.isLoading;
 
   final _gptClient = OpenAIClient();
 
-  Future<void> generateImage({required String prompt}) async {
-    if (state.isLoading) return;
+  void onDispose() {
+    imageTextController.dispose();
+    focusNode.dispose();
+  }
+
+  Future<void> generateImage() async {
+    if (imageTextController.text.isEmpty || state.isLoading) return;
 
     state = state.copyWith(isLoading: true);
+    final prompt = imageTextController.text;
 
+    imageTextController.clear();
+    focusNode.unfocus();
     try {
       final image = await _gptClient.generateImage(prompt: prompt);
 

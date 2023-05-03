@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_gpt/src/app_router.dart';
 import 'package:riverpod_gpt/src/screen/chat/chat_screen_model.dart';
 import 'package:riverpod_gpt/src/screen/chat/chat_screen_state.dart';
+import 'package:riverpod_gpt/src/screen/image/image_screen_model.dart';
+import 'package:riverpod_gpt/src/screen/image/image_screen_state.dart';
 import 'package:riverpod_gpt/src/service/chat_list_notifier.dart';
 import 'package:riverpod_gpt/src/service/models_notifier.dart';
 
@@ -26,5 +28,10 @@ class ViewModelProviders {
   static final chatViewProvider =
       AutoDisposeNotifierProvider<ChatScreenModel, ChatScreenState>(
     () => ChatScreenModel(),
+  );
+
+  static final imageViewProvider =
+      AutoDisposeNotifierProvider<ImageScreenModel, ImageScreenState>(
+    () => ImageScreenModel(),
   );
 }

@@ -40,7 +40,7 @@ class OpenAIClient {
 
   Future<OpenAIImageModel> generateImage({required String prompt}) async {
     final OpenAIImageModel image = await OpenAI.instance.image.create(
-      prompt: 'an astronaut on the sea',
+      prompt: prompt,
       n: 1,
       size: OpenAIImageSize.size512,
       responseFormat: OpenAIImageResponseFormat.url,
