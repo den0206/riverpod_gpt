@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_gpt/src/screen/chat/chat_screen.dart';
 import 'package:riverpod_gpt/src/screen/home/home_screen.dart';
+import 'package:riverpod_gpt/src/screen/image/image_screen.dart';
 
 class AppRouter {
   final Ref ref;
@@ -17,6 +18,9 @@ class AppRouter {
 
       case ChatScreen.routeName:
         return MaterialPageRoute(builder: (_) => const ChatScreen());
+
+      case ImageScreen.routeName:
+        return MaterialPageRoute(builder: (_) => const ImageScreen());
 
       default:
         return MaterialPageRoute(
