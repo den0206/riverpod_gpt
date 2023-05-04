@@ -18,7 +18,7 @@ dependencies:
   flutter_spinkit: ^5.2.0
   http: ^0.13.6
   animated_text_kit: ^4.2.2
-  dart_openai: ^1.9.6
+  dart_openai: ^1.9.7
   flutter_dotenv: ^5.0.2
 
 dev_dependencies:
@@ -27,8 +27,8 @@ dev_dependencies:
 
   flutter_lints: ^2.0.1
   build_runner: ^2.3.3
-  json_serializable: ^6.6.1
-  freezed: ^2.3.2
+  json_serializable: ^6.6.2
+  freezed: ^2.3.3
   source_gen: ^1.2.7
   flutter_gen_runner: ^5.3.0
 

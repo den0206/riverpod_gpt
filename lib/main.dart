@@ -4,7 +4,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_gpt/src/_generated/gen/colors.gen.dart';
 import 'package:riverpod_gpt/src/common/provider/providers.dart';
-import 'package:riverpod_gpt/src/service/openai_client.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,12 +11,6 @@ void main() async {
 
   final apiKey = dotenv.get("OPENAI_KEY");
   OpenAI.apiKey = apiKey;
-
-  final client = OpenAIClient();
-
-  // await client.sendMessage(
-  //     "日本 新宿周辺のおいしいご飯屋さんを {'name':hogehoge,'reason'':hogehoge,'url'': https://hogehoge.com/,'image_url':https://hogehoge.com/ } のような形で5軒ください。返答に JSON 以外の文章は入れないでください。",
-  //     []);
 
   runApp(const ProviderScope(child: MyApp()));
 }
